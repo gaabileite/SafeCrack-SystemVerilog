@@ -85,7 +85,7 @@ module safe_cracker (
 			end F_WAIT: begin
 				if (delay_cnt > 0) next_delay_cnt = delay_cnt - 1;
 				else next_state = A;
-			end
+			end default: next_state = A;
 		endcase
 	end
 
@@ -129,21 +129,8 @@ module safe_cracker (
 					if      (btn_inc_edge && register0< 4'b1001) 		register0 <= register0 + 1;
 					else if (btn_dec_edge && register0 > 4'b0) 			register0 <= register0 - 1;
 					else if (btn_inc_edge && register0 == 4'b1001) 		register0 <= 4'b0;
-					else if (btn_dec_edge && register0 == 4'b0) 		register0 <= 4'b1001;
-				end E_CORRECT: begin
-					delay_cnt = 5*ONE_SECOND;
-					next_state = F_WAIT;
-				end E_WRONG: begin
-					delay_cnt = 3*ONE_SECOND;
-					next_state = F_WAIT;
-				end F_WAIT: begin
-					if (delay_cnt > 0) begin
-                    next_delay_cnt = delay_cnt - 1;
-               end else begin
-                    next_state     = A;
-                    next_delay_cnt = delay_cnt; // resets delay counter
-               end
-				end
+					else if (btn_dec_edge && register0 == 4'b0) 		register0 <= 4'b1001
+				end default: ;
 			endcase
 		end
 	end
