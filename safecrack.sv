@@ -15,8 +15,9 @@ module safe_cracker (
 		C 				= 7'b0000100,
 		D 				= 7'b0001000,
 		E_CHECK 		= 7'b0010000,
-		E_CORRECT 	= 7'b0100000,
+		E_CORRECT 		= 7'b0100000,
 		E_WRONG 		= 7'b1000000
+		F_WAIT			= 7'b1111111
 	} state_t;
 
 	state_t state, next_state;
@@ -98,22 +99,22 @@ module safe_cracker (
 						if      (btn_inc_edge && register3 < 4b'1001) 		register3 <= register3 + 1;
 						else if (btn_dec_edge && register3 > 4b'0) 			register3 <= register3 - 1;
 						else if (btn_inc_edge && register3 == 4b'1001) 		register3 <= 4b'0;
-						else if (btn_dec_edge && register3 == 4b'0) 			register3 <= 4b'1001;
+						else if (btn_dec_edge && register3 == 4b'0) 		register3 <= 4b'1001;
 				end B: begin
 						if      (btn_inc_edge && register2 < 4b'1001) 		register2 <= register2 + 1;
 						else if (btn_dec_edge && register2 > 4b'0) 			register2 <= register2 - 1;
 						else if (btn_inc_edge && register2 == 4b'1001) 		register2<= 4b'0;
-						else if (btn_dec_edge && register2 == 4b'0) 			register2 <= 4b'1001;
+						else if (btn_dec_edge && register2 == 4b'0) 		register2 <= 4b'1001;
 				end C: begin
 						if      (btn_inc_edge && register1 < 4b'1001) 		register1 <= register1 + 1;
 						else if (btn_dec_edge && register1 > 4b'0) 			register1 <= register1 - 1;
 						else if (btn_inc_edge && register1 == 4b'1001) 		register1 <= 4b'0;
-						else if (btn_dec_edge && register1 == 4b'0) 			register1 <= 4b'1001;
+						else if (btn_dec_edge && register1 == 4b'0) 		register1 <= 4b'1001;
 				end D: begin
 						if      (btn_inc_edge && register0< 4b'1001) 		register0 <= register0 + 1;
 						else if (btn_dec_edge_edge && register0 > 4b'0) 	register0 <= register0 - 1;
 						else if (btn_inc_edge && register0 == 4b'1001) 		register0 <= 4b'0;
-						else if (btn_dec_edge && register0 == 4b'0) 			register0 <= 4b'1001;
+						else if (btn_dec_edge && register0 == 4b'0) 		register0 <= 4b'1001;
 				end E_CORRECT: begin
 					delay_cnt = 5*ONE_SECOND;
 					next_state = F_WAIT;
