@@ -45,6 +45,9 @@ module safecrack (
 	// setting the clock logic - with a 50MHz clock, it is needed 50000000 ticks to account for one second
    localparam int ONE_SECOND = 50_000_000; // 1 second delay at 50MHz clock
    logic [$clog2(5*ONE_SECOND)-1:0] delay_cnt, next_delay_cnt;
+	
+	// flag for the led time
+	logic was_correct;
 	 
 	// defining the edge for all of the buttons - this is needed so that the computer knows that each button has been pressed one time and not multiple
    logic btn_inc_prev, btn_inc_edge, btn_inc_pos;
@@ -89,25 +92,25 @@ module safecrack (
 				if (key_conf_edge) begin 
 					next_state    = C;
                next_position = position + 1'b1;
-            end else if (btn_inc_edge) next_state = C_INC;
-				else if 		(btn_dec_edge) next_state = C_DEC;
+            end else if (btn_inc_edge) next_state = B_INC;
+				else if 		(btn_dec_edge) next_state = B_DEC;
 				else next_state = B;
 				
 			end C: begin
 				if (key_conf_edge) begin 
 					next_state    = D;
                next_position = position + 1'b1;
-            end else if (btn_inc_edge) next_state = D_INC;
-				else if 		(btn_dec_edge) next_state = D_DEC;
+            end else if (btn_inc_edge) next_state = C_INC;
+				else if 		(btn_dec_edge) next_state = C_DEC;
 				else next_state = C;
 				
 			end D: begin
 				if (key_conf_edge) begin 
 					next_state    = CHECK;
                next_position = position + 1'b1;
-            end else if (btn_inc_edge) next_state = A_INC;
-				else if 		(btn_dec_edge) next_state = A_DEC;
-				else next_state = A;
+            end else if (btn_inc_edge) next_state = D_INC;
+				else if 		(btn_dec_edge) next_state = D_DEC;
+				else next_state = D;
 
          end CHECK: begin
 				if (register0 == pass0 &&
@@ -131,7 +134,12 @@ module safecrack (
 	
 	// increment and decrement logic
 	always_comb begin
-	
+		// default assignments
+		next_register0 = register0;  // mantém valor por padrão
+		next_register1 = register1;
+		next_register2 = register2;
+		next_register3 = register3;
+		
 		case (state)
 			A_INC: begin
 				if 		(register3 < 4'b1001)  		next_register3 = register3 + 1'b1;
@@ -188,12 +196,17 @@ module safecrack (
 				register1 <= next_register1;
 				register2 <= next_register2;
 				register3 <= next_register3;
+				
+				if (state == WAIT) begin
+					if (state == CORRECT) was_correct <= 1'b1;
+					if (state == WRONG)   was_correct <= 1'b0;
+				end
         end
 		end
 
     // combinational logic to light up the LEDs (drive the whole vector)
-    always_comb begin
-        led_green = (state == CORRECT) ? '1 : '0;
-        led_red   = (state == WRONG)   ? '1 : '0;
-    end
+	always_comb begin
+		led_green = (state == WAIT &&  was_correct) ? '1 : '0;
+		led_red   = (state == WAIT && ~was_correct) ? '1 : '0;
+	end
 endmodule
