@@ -1,9 +1,9 @@
 module safecrack ( 
    input  logic        clk,        // clock
-   input  logic        rst,        // reset key (KEY[0], ativo em nível baixo)
+   input  logic        rst,        // reset key 
+   input  logic        key_conf,   // confirmation key
    input  logic        btn_inc,    // increment btn
    input  logic        btn_dec,    // decrement btn
-   input  logic        key_conf,   // confirmation key
    output logic [3:0]  register0,
    output logic [3:0]  register1,
    output logic [3:0]  register2,
